@@ -21,6 +21,13 @@ class RecordController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:50',
+            'description' => 'nullable|string',
+            'code' => 'required|string|max:50',
+            'status' => 'required|in:active,inactive',
+        ]);
+
         $record = Record::create($request->all());
         return response()->json($record,201);
     }
@@ -38,6 +45,13 @@ class RecordController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'code' => 'required|string|max:50',
+            'status' => 'required|in:active,inactive',
+        ]);
+
         $record = Record::findOrFail($id);
         $record->update($request->all());
         return response()->json($record,200);
