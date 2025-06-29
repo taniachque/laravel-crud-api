@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Record extends Model
 {
     use HasFactory;
+
+    protected $fillable =[
+        'uuid',
+        'name',
+        'description',
+        'code',
+        'status',
+    ];
 }
