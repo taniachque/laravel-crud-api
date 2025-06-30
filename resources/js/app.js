@@ -16,16 +16,24 @@ const app = createApp({
                 status: 'active'
             },
             isEditing: false,
+            modalInstance: null,
         };
     },
     mounted() {
         this.fetchRecords();
+        const modalElement = document.getElementById('recordModal');
+        if (modalElement) {
+            this.modalInstance = new bootstrap.Modal(modalElement);
+        } else {
+            console.error('Elemento modal con ID "recordModal" no encontrado en el DOM.');
+        }
     },
     methods: {
         async fetchRecords() {
             try {
                 const response = await axios.get('/api/records');
                 this.records = response.data;
+                console.log('Registros obtenidos:', this.records);
             } catch (error) {
                 console.error('Error al obtener los registros:', error);
             }
@@ -34,13 +42,21 @@ const app = createApp({
         showModal() {
             this.isEditing = false;
             this.resetForm();
-            this.$bvModal.show('recordModal');
+            if (this.modalInstance) {
+                this.modalInstance.show();
+            } else {
+                console.error('Instancia del modal no disponible.');
+            }
         },
 
         editRecord(record) {
             this.isEditing = true;
             this.record = { ...record };
-            this.$bvModal.show('recordModal');
+            if (this.modalInstance) {
+                this.modalInstance.show();
+            } else {
+                console.error('Instancia del modal no disponible.');
+            }
         },
 
         async saveRecord() {
@@ -51,7 +67,9 @@ const app = createApp({
                     await axios.post('/api/records', this.record);
                 }
                 this.fetchRecords();
-                this.$bvModal.hide('recordModal');
+                if (this.modalInstance) {
+                    this.modalInstance.hide();
+                }
             } catch (error) {
                 console.error('Error al guardar el registro:', error);
             }
@@ -82,4 +100,5 @@ const app = createApp({
 });
 
 app.use(BootstrapVue3);
+
 app.mount('#app');
