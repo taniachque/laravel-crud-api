@@ -44,7 +44,7 @@ class RecordController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'code' => 'required|string|max:50|unique:records,code,' . $record->id,
+            'code' => 'required|string|max:50|unique:records,code,' . $record->uuid . ',uuid',
             'status' => 'required|in:active,inactive',
         ]);
 
