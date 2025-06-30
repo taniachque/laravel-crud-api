@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Records</title>
+    @vite(['resources/css/app.css'])
 </head>
 
 <body>
@@ -63,7 +64,7 @@
         </b-modal>
     </div>
 
-    <script src="{{ mix('js/app.js') }}"></script>
+    @vite(['resources/js/app.js'])
 </body>
 
 </html>

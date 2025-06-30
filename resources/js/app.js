@@ -1,23 +1,21 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import axios from 'axios';
-import { BootstrapVue } from 'bootstrap-vue';
+import { BootstrapVue3 } from 'bootstrap-vue-3';
 
-Vue.use(BootstrapVue);
-Vue.prototype.$http = axios;
-
-const app = new Vue({
-    el: '#app',
-    data: {
-        records: [],
-        record: { name: '', description: '', code: '', status: '' },
-        isEditing: false,
+const app = createApp({
+    data() {
+        return {
+            records: [],
+            record: { name: '', description: '', code: '', status: '' },
+            isEditing: false,
+        };
     },
     mounted() {
         this.fetchRecords();
     },
     methods: {
         fetchRecords() {
-            this.$http.get('/api/records')
+            axios.get('/api/records')
                 .then(response => {
                     this.records = response.data;
                 });
@@ -34,13 +32,13 @@ const app = new Vue({
         },
         saveRecord() {
             if (this.isEditing) {
-                this.$http.put(`/api/records/${this.record.id}`, this.record)
+                axios.put(`/api/records/${this.record.id}`, this.record)
                     .then(() => {
                         this.fetchRecords();
                         this.$bvModal.hide('recordModal');
                     });
             } else {
-                this.$http.post('/api/records', this.record)
+                axios.post('/api/records', this.record)
                     .then(() => {
                         this.fetchRecords();
                         this.$bvModal.hide('recordModal');
@@ -48,7 +46,7 @@ const app = new Vue({
             }
         },
         deleteRecord(id) {
-            this.$http.delete(`/api/records/${id}`)
+            axios.delete(`/api/records/${id}`)
                 .then(() => {
                     this.fetchRecords();
                 });
@@ -59,3 +57,6 @@ const app = new Vue({
         },
     },
 });
+
+app.use(BootstrapVue3);
+app.mount('#app');
