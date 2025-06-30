@@ -25,43 +25,64 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="record in records" :key="record.id">
+                <tr v-for="record in records" :key="record.uuid">
                     <td v-text="record.name"></td>
                     <td v-text="record.description"></td>
                     <td v-text="record.code"></td>
                     <td v-text="record.status"></td>
                     <td>
                         <button @click="editRecord(record)" class="btn btn-warning">Edit</button>
-                        <button @click="deleteRecord(record.id)" class="btn btn-danger">Delete</button>
+                        <button @click="deleteRecord(record.uuid)" class="btn btn-danger">Delete</button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <b-modal id="recordModal" @hide="resetForm()">
-            <template #modal-title>
-                <span v-if="isEditing">Edit Record</span>
-                <span v-else>Add Record</span>
-            </template>
-            <form @submit.prevent="saveRecord">
-                <b-form-group label="Name">
-                    <b-form-input v-model="record.name" required></b-form-input>
-                </b-form-group>
-                <b-form-group label="Description">
-                    <b-form-textarea v-model="record.description"></b-form-textarea>
-                </b-form-group>
-                <b-form-group label="Code">
-                    <b-form-input v-model="record.code" required></b-form-input>
-                </b-form-group>
-                <b-form-group label="Status">
-                    <b-form-select v-model="record.status" :options="['active', 'inactive']" required></b-form-select>
-                </b-form-group>
-                <b-button type="submit" variant="primary">
-                    <span v-if="isEditing">Update</span>
-                    <span v-else>Save</span>
-                </b-button>
-            </form>
-        </b-modal>
+        <div class="modal fade" id="recordModal" tabindex="-1" aria-labelledby="recordModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="recordModalLabel">
+                            <span v-if="isEditing">Edit Record</span>
+                            <span v-else>Add Record</span>
+                        </h5>
+                        <button type="button" class="btn-close" @click="hideModal()" aria-label="Close"></button>
+                    </div>
+                    <form @submit.prevent="saveRecord">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="recordName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="recordName" v-model="record.name"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recordDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="recordDescription" v-model="record.description"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recordCode" class="form-label">Code</label>
+                                <input type="text" class="form-control" id="recordCode" v-model="record.code"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="recordStatus" class="form-label">Status</label>
+                                <select class="form-select" id="recordStatus" v-model="record.status" required>
+                                    <option value="active">active</option>
+                                    <option value="inactive">inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="hideModal()">Cancel</button>
+                            <button type="submit" class="btn btn-primary">
+                                <span v-if="isEditing">Update</span>
+                                <span v-else>Save</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

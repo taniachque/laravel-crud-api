@@ -1,15 +1,13 @@
 import { createApp } from 'vue';
 import axios from 'axios';
-import BootstrapVue3 from 'bootstrap-vue-3';
 import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
 
 const app = createApp({
     data() {
         return {
             records: [],
             record: {
-                id: null,
+                uuid: null,
                 name: '',
                 description: '',
                 code: '',
@@ -24,8 +22,15 @@ const app = createApp({
         const modalElement = document.getElementById('recordModal');
         if (modalElement) {
             this.modalInstance = new bootstrap.Modal(modalElement);
+            modalElement.addEventListener('hidden.bs.modal', this.resetForm);
         } else {
-            console.error('Elemento modal con ID "recordModal" no encontrado en el DOM.');
+            console.error('Modal element with ID "recordModal" not found in the DOM.');
+        }
+    },
+    beforeUnmount() {
+        const modalElement = document.getElementById('recordModal');
+        if (modalElement && this.resetForm) {
+            modalElement.removeEventListener('hidden.bs.modal', this.resetForm);
         }
     },
     methods: {
@@ -33,9 +38,9 @@ const app = createApp({
             try {
                 const response = await axios.get('/api/records');
                 this.records = response.data;
-                console.log('Registros obtenidos:', this.records);
+                console.log('Records fetched successfully:', this.records);
             } catch (error) {
-                console.error('Error al obtener los registros:', error);
+                console.error('Error fetching records:', error);
             }
         },
 
@@ -45,7 +50,15 @@ const app = createApp({
             if (this.modalInstance) {
                 this.modalInstance.show();
             } else {
-                console.error('Instancia del modal no disponible.');
+                console.error('Modal instance not available.');
+            }
+        },
+
+        hideModal() {
+            if (this.modalInstance) {
+                this.modalInstance.hide();
+            } else {
+                console.error('Modal instance not available for hiding.');
             }
         },
 
@@ -55,15 +68,18 @@ const app = createApp({
             if (this.modalInstance) {
                 this.modalInstance.show();
             } else {
-                console.error('Instancia del modal no disponible.');
+                console.error('Modal instance not available.');
             }
         },
 
         async saveRecord() {
+            console.log('Data to send (saveRecord):', this.record);
             try {
                 if (this.isEditing) {
-                    await axios.put(`/api/records/${this.record.id}`, this.record);
+                    console.log('Sending PUT for UUID:', this.record.uuid);
+                    await axios.put(`/api/records/${this.record.uuid}`, this.record);
                 } else {
+                    console.log('Sending POST (new record)');
                     await axios.post('/api/records', this.record);
                 }
                 this.fetchRecords();
@@ -71,24 +87,32 @@ const app = createApp({
                     this.modalInstance.hide();
                 }
             } catch (error) {
-                console.error('Error al guardar el registro:', error);
+                console.error('Error saving record:', error);
+                if (error.response) {
+                    console.error('Server error response:', error.response.data);
+                    console.error('Error status code:', error.response.status);
+                }
             }
         },
 
-        async deleteRecord(id) {
-            if (confirm('¿Estás seguro de que quieres eliminar este registro?')) {
+        async deleteRecord(uuid) {
+            if (confirm('Are you sure you want to delete this record?')) {
                 try {
-                    await axios.delete(`/api/records/${id}`);
+                    await axios.delete(`/api/records/${uuid}`);
                     this.fetchRecords();
                 } catch (error) {
-                    console.error('Error al eliminar el registro:', error);
+                    console.error('Error deleting record:', error);
+                    if (error.response) {
+                        console.error('Server error response:', error.response.data);
+                        console.error('Error status code:', error.response.status);
+                    }
                 }
             }
         },
 
         resetForm() {
             this.record = {
-                id: null,
+                uuid: null,
                 name: '',
                 description: '',
                 code: '',
@@ -98,7 +122,5 @@ const app = createApp({
         },
     },
 });
-
-app.use(BootstrapVue3);
 
 app.mount('#app');

@@ -16,4 +16,7 @@ class Record extends Model
         'code',
         'status',
     ];
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string'; 
 }
