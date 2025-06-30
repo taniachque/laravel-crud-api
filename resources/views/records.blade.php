@@ -10,9 +10,17 @@
 </head>
 
 <body>
-    <div id="app" class="container">
-        <h1>Records</h1>
-        <button class="btn btn-primary" @click="showModal()">Add Record</button>
+    <div id="app" class="container mt-4">
+        <h1 class="mb-4">Records</h1>
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary me-3" @click="showModal()">Add Record</button>
+            <div class="input-group w-75">
+                <input type="text" class="form-control" placeholder="Search by name, description, or code..."
+                    v-model="searchTerm" @keyup.enter="fetchRecords()">
+                <button class="btn btn-outline-secondary" type="button" @click="fetchRecords()">Search</button>
+                <button class="btn btn-outline-danger" type="button" @click="clearSearch()">Clear</button>
+            </div>
+        </div>
 
         <table class="table">
             <thead>

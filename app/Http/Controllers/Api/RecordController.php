@@ -9,9 +9,18 @@ use Illuminate\Support\Str;
 
 class RecordController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Record::all();
+        $query = Record::query();
+
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where('name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('description', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('code', 'like', '%' . $searchTerm . '%');
+        }
+
+        return $query->get();
     }
 
     public function store(Request $request)

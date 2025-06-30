@@ -15,6 +15,7 @@ const app = createApp({
             },
             isEditing: false,
             modalInstance: null,
+            searchTerm: '',
         };
     },
     mounted() {
@@ -36,7 +37,11 @@ const app = createApp({
     methods: {
         async fetchRecords() {
             try {
-                const response = await axios.get('/api/records');
+                const params = {};
+                if (this.searchTerm) {
+                    params.search = this.searchTerm;
+                }
+                const response = await axios.get('/api/records', { params });
                 this.records = response.data;
                 console.log('Records fetched successfully:', this.records);
             } catch (error) {
@@ -120,6 +125,11 @@ const app = createApp({
             };
             this.isEditing = false;
         },
+
+        clearSearch() {
+            this.searchTerm = '';
+            this.fetchRecords();
+        }
     },
 });
 
